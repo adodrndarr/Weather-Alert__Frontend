@@ -1,0 +1,69 @@
+#btnSearch{
+    color: white;
+    border: 2px solid aquamarine;
+    font-weight: bold;
+}
+#btnSearch:hover{
+    background-color: whitesmoke;
+    color: blue;
+    font-weight: bold;
+    border: 2px solid aquamarine;
+}
+#btnSearch:active{
+    color: blue;
+    background-color: aqua;
+    border: 2px solid blue;
+}
+#cloudyImg{
+    width: 40px;
+    height: 30px;
+}
+.nav-item a{
+    font-weight: 900;
+}
+body{
+    width: 100%;
+    height: 100%;
+    background-image: url("../img/background.png");
+}
+#header{
+    text-align: center;
+    font-weight: bold;
+    font-size: 60px;
+}
+#content{
+    text-align: center;
+    font-size: 30px;
+}
+#contentWrapper{
+    text-align: center;
+    font-size: 30px;
+    /* visibility: hidden; holds white space...*/
+    /* display: none;  display none to all except the one that is clicked... from js, load all at once..*/
+}
+.info{
+    display: none;
+}
+.warmDay{
+    font-size: 30px;
+    color: #ff3333;
+    margin: 0px auto;
+    width: 500px;
+    text-align: center;
+    
+    text-shadow: 2px -1px red;
+}
+.coldDay{
+    font-size: 30px;
+    color: blue;
+    margin: 0px auto;
+    width: 500px;
+    text-align: center;
+    
+    text-shadow: 2px -1px blue;
+}
+.text{
+    color: green;
+    font-size: 30px;
+    font-weight: bold;
+}

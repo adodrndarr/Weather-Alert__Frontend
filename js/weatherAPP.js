@@ -228,7 +228,7 @@ function GET(link) {
                 // console.log(responseObj);
 
                 for (let i = 0; i < responseObj.list.length; i++) {
-                    printHourlyInfo(responseObj.list[i].weather[0].icon, responseObj.list[i].weather[0].     description, responseObj.list[i].dt_txt, responseObj.list[i].main.temp, responseObj.list[i] .main.feels_like, responseObj.list[i].main.humidity, responseObj.list[i].wind.speed);
+                    printHourlyInfo(responseObj.list[i].weather[0].icon, responseObj.list[i].weather[0].description, responseObj.list[i].dt_txt, responseObj.list[i].main.temp, responseObj.list[i] .main.feels_like, responseObj.list[i].main.humidity, responseObj.list[i].wind.speed);
                 }
                 printStatisticsInfo(responseObj);
                 searchInput.value = "";

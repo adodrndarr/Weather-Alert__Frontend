@@ -8,6 +8,8 @@ let searchBtn = document.getElementById("btnSearch");
 let searchInput = document.getElementById("searchInput");
 let hourlyTableBody = document.getElementById("hourlyTableBody");
 let statisticsTableBody = document.getElementById("statisticsTableBody");
+let btnSort = document.getElementById("sort");
+let btnRestore = document.getElementById("restore");
 
 function printStatistics(element1, e1Info, element2) {
     navLinks[0].setAttribute("class", "nav-link active");
@@ -15,8 +17,8 @@ function printStatistics(element1, e1Info, element2) {
     navLinks[2].setAttribute("class", "nav-link");
 
     element1.innerHTML = `${e1Info}`;
-    element2.innerHTML = `The most accurate weather page in the world! According to some sources...`;
-    element2.style.color = `#1d9afd`; element2.style.fontSize = `38px`; element2.style.fontWeight = `bold`;
+    element2.innerHTML = `The most accurate weather page in the world, according to some sources...`;
+    element2.style.color = `blue`; element2.style.fontSize = `38px`; element2.style.fontWeight = `bold`;
     
     contentWrapper[0].style.display = `block`;
     contentWrapper[1].style.display = `none`;
@@ -41,23 +43,25 @@ function printAbout(element1, e1Info, element2) {
     navLinks[2].setAttribute("class", "nav-link active");
 
     element1.innerHTML = `${e1Info}`;
-    element2.innerHTML = `<span class = "text">What would you call the child of a vampire and a snowman? Frostbite.
-    <br/>Wouldn’t exercise be more fun if calories screamed while you burned them?
-    <br/><br/>A kid finds a magical lamp. He rubs the lamp, and a genie appears and says, <br/> “What is your first wish?” The kid says, “I wish I were rich!” <br/>The genie replies, “It is done! What is your second wish, Rich?”</span><p> This application is a project built to have some real world application and meaning.</p>`;
+    element2.innerHTML = `<br/> <br/> <br/> <br/> <br/> <br/>
+        This application is a project built to have some real world application and meaning.</p>`;
 
     contentWrapper[0].style.display = `none`;
     contentWrapper[1].style.display = `none`;
     contentWrapper[2].style.display = `block`;
     days.style.display = `none`;
 }
-
+function colorEl(element){
+    element.style.color = `whitesmoke`;
+}
 function printHourlyInfo(imgIcon, description, timeDate, tempR, tempFlike, Humidity, WindSpeed) {
+
     let row = document.createElement("tr");
     let tdIcon = document.createElement("td");
     let tdDescription = document.createElement("td");
         tdDescription.innerText = description;
     let time = document.createElement("td");
-        time.innerText = timeDate;
+        time.innerText = new Date(timeDate).toLocaleString();
     let temperature = document.createElement("td");
         temperature.innerText = `${tempR} C (${tempFlike} C)`;
     let humidity = document.createElement("td");
@@ -67,6 +71,22 @@ function printHourlyInfo(imgIcon, description, timeDate, tempR, tempFlike, Humid
     let img = document.createElement("img");
         img.setAttribute(`src`, `http://openweathermap.org/img/w/${imgIcon}.png`);
 
+        if(tempR > 7) temperature.style.color = `red`;
+        else if(tempR < 7) temperature.style.color = `blue`;
+
+        if(description === `clear sky`) tdDescription.style.color = `red`;
+        if(description === `light rain` || description === `moderate rain`) {
+            tdDescription.style.color = `blue`;
+            tdDescription.style.fontWeight = `bold`;
+        }
+        if(description === `overcast clouds` || description === `scattered clouds` || 
+                description === `few clouds` || description === `broken clouds`) 
+                tdDescription.style.color = `black`;
+        if(description === `light snow`) tdDescription.style.color = `white`;
+        colorEl(humidity);
+        colorEl(windSpeed);
+        colorEl(time);
+
     tdIcon.appendChild(img);
     row.appendChild(tdIcon);
     row.appendChild(tdDescription);
@@ -74,6 +94,7 @@ function printHourlyInfo(imgIcon, description, timeDate, tempR, tempFlike, Humid
     row.appendChild(temperature);
     row.appendChild(humidity);
     row.appendChild(windSpeed);
+
     hourlyTableBody.appendChild(row);
 }
 function printStatisticsInfo(responseObj) {
@@ -94,7 +115,6 @@ function printStatisticsInfo(responseObj) {
 
     let sortedLowest = tempArray.sort((a, b) => b - a);
     const lowestTemperature = sortedLowest[sortedLowest.length - 1]; 
-
     let lowestTempDay = null;
     for (let i = 0; i < responseObj.list.length; i++) {
         if (responseObj.list[i].main.temp_min === lowestTemperature) {
@@ -143,6 +163,12 @@ function printStatisticsInfo(responseObj) {
         coldestDay.setAttribute("class", "coldDay");
         coldestDay.innerText = `The coldest day of this period will be ${lowestTempDay}`;
     
+    if(largestTemperature > 7) tdMaxTemp.style.color = `red`;
+    if(lowestTemperature > 7) lowTemp.style.color = `red`;
+
+    if(largestTemperature < 7) tdMaxTemp.style.color = `blue`;
+    if(lowestTemperature < 7) lowTemp.style.color = `blue`;
+
     row.appendChild(tdMaxTemp);
     row.appendChild(avgTemp);
     row.appendChild(lowTemp);
@@ -153,7 +179,36 @@ function printStatisticsInfo(responseObj) {
 
     if(lowestTempDay !== null) days.appendChild(coldestDay);
     if(warmestDay !== null) days.appendChild(warmestDay);
+    
     statisticsTableBody.appendChild(row);
+}
+function sorter(responseObj){
+    let humdArraySort = [];
+    let windArraySort = [];
+    let tempArraySort = [];
+
+    for(let i = 0; i < responseObj.list.length; i++){
+        humdArraySort.push(responseObj.list[i].main.humidity);
+        windArraySort.push(responseObj.list[i].wind.speed);
+        tempArraySort.push(responseObj.list[i].main.temp);
+    }
+
+    humdArraySort.sort((a, b) => b - a);
+    windArraySort.sort((a, b) => b - a);
+    tempArraySort.sort((a, b) => b - a);
+    
+    hourlyTableBody.innerText = "";
+    for (let i = 0; i < responseObj.list.length; i++) {
+        printHourlyInfo(responseObj.list[i].weather[0].icon, responseObj.list[i].weather[0].description, responseObj.list[i].dt_txt, tempArraySort[i], responseObj.list[i].main.feels_like, humdArraySort[i], windArraySort[i]);
+    }
+    // console.log("done sorting items");    ///////////////////// debug
+}
+function restorer(responseObj){
+    hourlyTableBody.innerText = "";
+    for (let i = 0; i < responseObj.list.length; i++) {
+        printHourlyInfo(responseObj.list[i].weather[0].icon, responseObj.list[i].weather[0].description, responseObj.list[i].dt_txt, responseObj.list[i].main.temp, responseObj.list[i].main.feels_like, responseObj.list[i].main.humidity, responseObj.list[i].wind.speed);
+    }
+    // console.log("done restoring items -------------------"); ////////////////// debug
 }
 function GET(link) {
     $(function () {
@@ -170,13 +225,23 @@ function GET(link) {
                 days.innerText = ""; // reset
                 statisticsTableBody.innerText = ""; // reset
                 hourlyTableBody.innerText = ""; // reset
-                console.log(responseObj);
+                // console.log(responseObj);
 
                 for (let i = 0; i < responseObj.list.length; i++) {
-                    printHourlyInfo(responseObj.list[i].weather[0].icon, responseObj.list[i].weather[0].description, responseObj.list[i].dt_txt, responseObj.list[i].main.temp, responseObj.list[i].main.feels_like, responseObj.list[i].main.humidity, responseObj.list[i].wind.speed);
+                    printHourlyInfo(responseObj.list[i].weather[0].icon, responseObj.list[i].weather[0].     description, responseObj.list[i].dt_txt, responseObj.list[i].main.temp, responseObj.list[i] .main.feels_like, responseObj.list[i].main.humidity, responseObj.list[i].wind.speed);
                 }
                 printStatisticsInfo(responseObj);
                 searchInput.value = "";
+
+                return new Promise(resolve => resolve(responseObj))
+                .then(responseObj =>{
+                        btnSort.addEventListener("click", function(){
+                            sorter(responseObj);
+                        });
+                        btnRestore.addEventListener("click", function(){
+                            restorer(responseObj);
+                        });
+                })
             })
             .fail(responseEr => {
                 alert(`Wrong input please enter a valid City!`);
@@ -185,23 +250,23 @@ function GET(link) {
 
                 printHourly(header, `Hourly Weather Skopje`, contentDiv);
                 printStatistics(header, `WeatherAlert Skopje`, contentDiv);
+                GET("https://api.openweathermap.org/data/2.5/forecast?q=skopje&units=metric&APPID=a7fd85fdea2a7f635dbc236e01014ba9");
                 City = "Skopje";
-
-                
             });
     });
 }
+
 let City = null;
 function saveValue(city) {
     City = city;
 }
 navLinks[0].addEventListener("click", _ => {
     if (City !== null) printStatistics(header, `WeatherAlert ${City}`, contentDiv);
-    else printStatistics(header, `WeatherAlert Skopje`, contentDiv);
+    else               printStatistics(header, `WeatherAlert Skopje`, contentDiv);
 });
 navLinks[1].addEventListener("click", _ => {
     if (City !== null) printHourly(header, `Hourly Weather ${City}`, contentDiv);
-    else printHourly(header, `Hourly Weather Skopje`, contentDiv);
+    else               printHourly(header, `Hourly Weather Skopje`, contentDiv);
 });
 navLinks[2].addEventListener("click", _ => {
     printAbout(header, `About WeatherAlert`, contentDiv);
@@ -219,3 +284,6 @@ searchBtn.addEventListener("click", function (e) {
 // launch statistics for Skopje when page loads..
 GET("https://api.openweathermap.org/data/2.5/forecast?q=skopje&units=metric&APPID=a7fd85fdea2a7f635dbc236e01014ba9");
 printStatistics(header, `WeatherAlert Skopje`, contentDiv);
+
+
+

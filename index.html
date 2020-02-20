@@ -14,10 +14,6 @@
 <body>
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
-      aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
 
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
       <a class="navbar-brand" href="#"><img src="img/cloudy.svg" id="cloudyImg" /></a>
@@ -35,7 +31,7 @@
       </ul>
 
       <form class="form-inline my-2 my-lg-0">
-        <input id="searchInput" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <input id="searchInput" class="form-control mr-sm-2" type="search" placeholder="Search a City" aria-label="Search">
         <button id="btnSearch" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
       </form>
 
@@ -69,7 +65,9 @@
           <th>Time</th>
           <th>Temperature</th>
           <th>Humidity</th>
-          <th>Wind Speed</th>
+          <th>Wind Speed <button id="sort">Sort</button> 
+                        <button id="restore">Restore</button> 
+          </th>
         </thead>
         <tbody id="hourlyTableBody"></tbody>
       </table>
@@ -98,3 +96,4 @@
   <script src="js/weatherAPP.js"></script>
 </body>
 </html>
+

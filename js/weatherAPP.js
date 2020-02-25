@@ -83,6 +83,8 @@ function printHourlyInfo(imgIcon, description, timeDate, tempR, tempFlike, Humid
                 description === `few clouds` || description === `broken clouds`) 
                 tdDescription.style.color = `black`;
         if(description === `light snow`) tdDescription.style.color = `white`;
+        if(description === `snow`) tdDescription.style.color = `white`;
+
         colorEl(humidity);
         colorEl(windSpeed);
         colorEl(time);
@@ -281,9 +283,8 @@ searchBtn.addEventListener("click", function (e) {
     GET(`https://api.openweathermap.org/data/2.5/forecast?q=${searchInput.value}&units=metric&APPID=a7fd85fdea2a7f635dbc236e01014ba9`);
 });
 
+
+
 // launch statistics for Skopje when page loads..
 GET("https://api.openweathermap.org/data/2.5/forecast?q=skopje&units=metric&APPID=a7fd85fdea2a7f635dbc236e01014ba9");
 printStatistics(header, `WeatherAlert Skopje`, contentDiv);
-
-
-

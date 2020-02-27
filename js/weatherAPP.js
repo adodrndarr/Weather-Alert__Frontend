@@ -55,7 +55,6 @@ function colorEl(element){
     element.style.color = `whitesmoke`;
 }
 function printHourlyInfo(imgIcon, description, timeDate, tempR, tempFlike, Humidity, WindSpeed) {
-
     let row = document.createElement("tr");
     let tdIcon = document.createElement("td");
     let tdDescription = document.createElement("td");
@@ -184,66 +183,60 @@ function printStatisticsInfo(responseObj) {
     
     statisticsTableBody.appendChild(row);
 }
-function sorter(responseObj){
-    let humdArraySort = [];
-    let windArraySort = [];
-    let tempArraySort = [];
-
-    for(let i = 0; i < responseObj.list.length; i++){
-        humdArraySort.push(responseObj.list[i].main.humidity);
-        windArraySort.push(responseObj.list[i].wind.speed);
-        tempArraySort.push(responseObj.list[i].main.temp);
+let responseObjListArray = null;
+function sorter(){
+    for(let i = 0; i < responseObjListArray.length; i++){
+        responseObjListArray.sort((obj1, obj2) => {
+            if(obj1.main.temp < obj2.main.temp) return 1;
+            else if(obj1.main.temp === obj2.main.temp) return 0;
+            else return -1;
+        });
     }
-
-    humdArraySort.sort((a, b) => b - a);
-    windArraySort.sort((a, b) => b - a);
-    tempArraySort.sort((a, b) => b - a);
     
-    hourlyTableBody.innerText = "";
-    for (let i = 0; i < responseObj.list.length; i++) {
-        printHourlyInfo(responseObj.list[i].weather[0].icon, responseObj.list[i].weather[0].description, responseObj.list[i].dt_txt, tempArraySort[i], responseObj.list[i].main.feels_like, humdArraySort[i], windArraySort[i]);
+    hourlyTableBody.innerHTML = "";
+    for (let i = 0; i < responseObjListArray.length; i++) {
+        printHourlyInfo(responseObjListArray[i].weather[0].icon, responseObjListArray[i].weather[0].description, responseObjListArray[i].dt_txt, responseObjListArray[i].main.temp, responseObjListArray[i].main.feels_like, responseObjListArray[i].main.humidity, responseObjListArray[i].wind.speed);
     }
     // console.log("done sorting items");    ///////////////////// debug
 }
-function restorer(responseObj){
-    hourlyTableBody.innerText = "";
+function startHourlyInfo(responseObj){
     for (let i = 0; i < responseObj.list.length; i++) {
-        printHourlyInfo(responseObj.list[i].weather[0].icon, responseObj.list[i].weather[0].description, responseObj.list[i].dt_txt, responseObj.list[i].main.temp, responseObj.list[i].main.feels_like, responseObj.list[i].main.humidity, responseObj.list[i].wind.speed);
+        printHourlyInfo(responseObj.list[i].weather[0].icon, responseObj.list[i].weather[0].description, responseObj.list[i].dt_txt, responseObj.list[i].main.temp, responseObj.list[i] .main.feels_like, responseObj.list[i].main.humidity, responseObj.list[i].wind.speed);
     }
+}
+function restorer(responseObj){
+    hourlyTableBody.innerHTML = "";
+    startHourlyInfo(responseObj);
+
     // console.log("done restoring items -------------------"); ////////////////// debug
 }
 function GET(link) {
     $(function () {
         $.ajax({
             url: `${link}`,
-            // success: response => {
-            //     console.log(response);
-            // },
-            // error: responseEr =>{
-            //     console.log(responseEr);
-            // }
         })
             .done(responseObj => {
                 days.innerText = ""; // reset
                 statisticsTableBody.innerText = ""; // reset
                 hourlyTableBody.innerText = ""; // reset
                 // console.log(responseObj);
-
-                for (let i = 0; i < responseObj.list.length; i++) {
-                    printHourlyInfo(responseObj.list[i].weather[0].icon, responseObj.list[i].weather[0].description, responseObj.list[i].dt_txt, responseObj.list[i].main.temp, responseObj.list[i] .main.feels_like, responseObj.list[i].main.humidity, responseObj.list[i].wind.speed);
-                }
+                responseObjListArray = responseObj.list; // save obj for further use...
+                
+                startHourlyInfo(responseObj);
                 printStatisticsInfo(responseObj);
                 searchInput.value = "";
 
-                return new Promise(resolve => resolve(responseObj))
+                fetch(link).then(response => response.json())
                 .then(responseObj =>{
-                        btnSort.addEventListener("click", function(){
-                            sorter(responseObj);
-                        });
-                        btnRestore.addEventListener("click", function(){
-                            restorer(responseObj);
-                        });
-                })
+                    btnSort.addEventListener("click", function(){
+                        sorter();
+                    });
+                   
+                    btnRestore.addEventListener("click", function(){
+                        restorer(responseObj);
+                    });
+                    
+                });
             })
             .fail(responseEr => {
                 alert(`Wrong input please enter a valid City!`);
@@ -257,7 +250,6 @@ function GET(link) {
             });
     });
 }
-
 let City = null;
 function saveValue(city) {
     City = city;
@@ -282,8 +274,6 @@ searchBtn.addEventListener("click", function (e) {
     printHourly(header, `Hourly Weather ${City}`, contentDiv);
     GET(`https://api.openweathermap.org/data/2.5/forecast?q=${searchInput.value}&units=metric&APPID=a7fd85fdea2a7f635dbc236e01014ba9`);
 });
-
-
 
 // launch statistics for Skopje when page loads..
 GET("https://api.openweathermap.org/data/2.5/forecast?q=skopje&units=metric&APPID=a7fd85fdea2a7f635dbc236e01014ba9");

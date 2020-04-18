@@ -244,7 +244,7 @@ function GET(link) {
                 console.log(responseEr);
 
                 printHourly(header, `Hourly Weather Skopje`, contentDiv);
-                printStatistics(header, `WeatherAlert Skopje`, contentDiv);
+                printStatistics(header, `Weather Alert Skopje`, contentDiv);
                 GET("https://api.openweathermap.org/data/2.5/forecast?q=skopje&units=metric&APPID=a7fd85fdea2a7f635dbc236e01014ba9");
                 City = "Skopje";
             });
@@ -255,26 +255,26 @@ function saveValue(city) {
     City = city;
 }
 navLinks[0].addEventListener("click", _ => {
-    if (City !== null) printStatistics(header, `WeatherAlert ${City}`, contentDiv);
-    else               printStatistics(header, `WeatherAlert Skopje`, contentDiv);
+    if (City !== null) printStatistics(header, `Weather Alert ${City}`, contentDiv);
+    else               printStatistics(header, `Weather Alert Skopje`, contentDiv);
 });
 navLinks[1].addEventListener("click", _ => {
     if (City !== null) printHourly(header, `Hourly Weather ${City}`, contentDiv);
     else               printHourly(header, `Hourly Weather Skopje`, contentDiv);
 });
 navLinks[2].addEventListener("click", _ => {
-    printAbout(header, `About WeatherAlert`, contentDiv);
+    printAbout(header, `About Weather Alert`, contentDiv);
 });
 
 searchBtn.addEventListener("click", function (e) {
     e.preventDefault();
     saveValue(searchInput.value.charAt(0).toUpperCase() + searchInput.value.slice(1));
 
-    printStatistics(header, `WeatherAlert ${City}`, contentDiv);
+    printStatistics(header, `Weather Alert ${City}`, contentDiv);
     printHourly(header, `Hourly Weather ${City}`, contentDiv);
     GET(`https://api.openweathermap.org/data/2.5/forecast?q=${searchInput.value}&units=metric&APPID=a7fd85fdea2a7f635dbc236e01014ba9`);
 });
 
 // launch statistics for Skopje when page loads..
 GET("https://api.openweathermap.org/data/2.5/forecast?q=skopje&units=metric&APPID=a7fd85fdea2a7f635dbc236e01014ba9");
-printStatistics(header, `WeatherAlert Skopje`, contentDiv);
+printStatistics(header, `Weather Alert Skopje`, contentDiv);
